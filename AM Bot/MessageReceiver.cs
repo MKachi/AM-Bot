@@ -50,11 +50,17 @@ namespace AM_Bot
                 foreach (var guild in _client.Guilds)
                 {
                     sendText.Append("Guild : ").Append(guild.Name).Append("\n");
-                    foreach (IChannel channel in guild.Channels)
+                    foreach (var channel in guild.Channels)
                     {
-                        if (!ReferenceEquals(channel.Name, null) && channel.GetType().Equals(typeof(SocketTextChannel)))
+                        if (!ReferenceEquals(channel.Name, null) && 
+                            channel.GetType().Equals(typeof(SocketTextChannel)))
                         {
-                            sendText.Append("   ").Append(channel.Name).Append(" - ").Append(channel.Id).Append("\n");
+
+                            var permissions = guild.GetUser(message.Author.Id).GetPermissions(channel);
+                            if (permissions.Has(ChannelPermission.SendMessages))
+                            {
+                                sendText.Append("   ").Append(channel.Name).Append(" - ").Append(channel.Id).Append("\n");
+                            }
                         }
                     }
                 }
@@ -85,8 +91,6 @@ namespace AM_Bot
             {
                 if (_userSetting.ContainsKey(message.Author.Id))
                 {
-                    Console.WriteLine(message.Channel.Name);
-                    Console.WriteLine("@" + message.Author.Username + "#" + message.Author.Discriminator);
                     SocketChannel channel = _client.GetChannel(_userSetting[message.Author.Id]);
                     var messageChannel = channel as IMessageChannel;
                     await messageChannel.SendMessageAsync(message.Content);
