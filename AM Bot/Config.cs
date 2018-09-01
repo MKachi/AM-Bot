@@ -13,19 +13,19 @@ namespace AM_Bot
         public static void Load()
         {
             Console.WriteLine("[System] Load Config...");
-            string filePath = string.Format("{0}/{1}", Directory.GetCurrentDirectory(), "Config.json");
+            string filePath = string.Format("{0}/{1}", Directory.GetCurrentDirectory(), "config.json");
             if (!File.Exists(filePath))
             {
                 JObject json = new JObject();
                 json.Add("token", "Your bot token");
-                json.Add("Language", "ko.json");
+                json.Add("language", "ko.json");
                 FileStream fileStream = new FileStream(filePath, FileMode.CreateNew);
                 StreamWriter writer = new StreamWriter(fileStream);
                 writer.Write(json.ToString());
                 writer.Close();
                 fileStream.Close();
 
-                throw new Exception("[Error] Please configure Config.json file.");
+                throw new Exception("[Error] Please configure config.json file.");
             }
             else
             {
@@ -38,7 +38,7 @@ namespace AM_Bot
 
                 JObject json = JObject.Parse(jsonData);
                 Token = json.Value<string>("token");
-                LanguageFile = json.Value<string>("Language");
+                LanguageFile = json.Value<string>("language");
                 Console.WriteLine("[System] Config load complite!");
                 Messages.Load(LanguageFile);
             }
