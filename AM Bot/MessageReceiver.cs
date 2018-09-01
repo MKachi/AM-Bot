@@ -26,23 +26,15 @@ namespace AM_Bot
             }
             else if (message.Content.Equals("!am help") || message.Content.Equals("!am"))
             {
-                await message.Channel.SendMessageAsync(
-                    "도움말\n" +
-                    "!am open - 익명 메시지를 보낼 수 있는 개인 메시지 창을 띄웁니다."
-                );
+                await message.Channel.SendMessageAsync(Messages.Get("help"));
             }
             else if (message.Content.Equals("!am open"))
             {
-                await message.Author.SendMessageAsync(
-                    "도움말\n" +
-                    "이 곳에 치는 명령어 이외의 메시지들은 익명으로 지정된 채널에 전송됩니다.\n" +
-                    "처음 사용시 !am set을 통해서 설정을 해주세요!\n" +
-                    "!am code - 가입된 Guild의 channel 코드들을 보여줍니다.\n" +
-                    "!am set [channel code] - 익명 메시지를 보낼 길드와 채널을 설정합니다.");
+                await message.Author.SendMessageAsync(Messages.Get("open"));
             }
             else if (message.Content.IndexOf("!am").Equals(0))
             {
-                await message.Author.SendMessageAsync("없는 명령어 입니다.");
+                await message.Author.SendMessageAsync(Messages.Get("missingCommand"));
             }
         }
 
@@ -50,12 +42,7 @@ namespace AM_Bot
         {
             if (message.Content.Equals("!am help") || message.Content.Equals("!am"))
             {
-                await message.Author.SendMessageAsync(
-                    "도움말\n" +
-                    "이 곳에 치는 명령어 이외의 메시지들은 익명으로 지정된 채널에 전송됩니다.\n" +
-                    "처음 사용시 !am set을 통해서 설정을 해주세요!\n" +
-                    "!am code - 가입된 Guild의 channel 코드들을 보여줍니다.\n" +
-                    "!am set [channel code] - 익명 메시지를 보낼 길드와 채널을 설정합니다.");
+                await message.Author.SendMessageAsync(Messages.Get("DM help"));
             }
             else if (message.Content.Equals("!am code"))
             {
@@ -88,11 +75,11 @@ namespace AM_Bot
                         {
                             _userSetting.Add(message.Author.Id, id);
                         }
-                        await message.Author.SendMessageAsync("설정되었습니다.");
+                        await message.Author.SendMessageAsync(Messages.Get("set"));
                         return;
                     }
                 }
-                await message.Author.SendMessageAsync("코드를 다시 확인해주세요.");
+                await message.Author.SendMessageAsync(Messages.Get("setError"));
             }
             else if (!message.Content.IndexOf("!am").Equals(0))
             {
@@ -102,16 +89,16 @@ namespace AM_Bot
                     Console.WriteLine("@" + message.Author.Username + "#" + message.Author.Discriminator);
                     SocketChannel channel = _client.GetChannel(_userSetting[message.Author.Id]);
                     var messageChannel = channel as IMessageChannel;
-                    await messageChannel.SendMessageAsync(Config.Name + message.Content);
+                    await messageChannel.SendMessageAsync(message.Content);
                 }
                 else
                 {
-                    await message.Author.SendMessageAsync("!am set 명령어를 통해 채널을 설정해주세요");
+                    await message.Author.SendMessageAsync(Messages.Get("setPlz"));
                 }
             }
             else
             {
-                await message.Author.SendMessageAsync("없는 명령어 입니다.");
+                await message.Author.SendMessageAsync(Messages.Get("missingCommand"));
             }
         }
 

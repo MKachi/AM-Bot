@@ -11,17 +11,21 @@ namespace AM_Bot
     {
         static void Main(string[] args)
         {
-            new Program().MainAsync().GetAwaiter().GetResult();
+            try
+            {
+                Config.Load();
+                new Program().MainAsync().GetAwaiter().GetResult();
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception.Message);
+            }
         }
 
         public async Task MainAsync()
         {
             DiscordSocketClient client = new DiscordSocketClient();
-
-            // Write your bot token
-            string token = Config.Token;
-
-            await client.LoginAsync(TokenType.Bot, token);
+            await client.LoginAsync(TokenType.Bot, Config.Token);
             await client.StartAsync();
 
             MessageReceiver receiver = new MessageReceiver(client);
@@ -32,6 +36,7 @@ namespace AM_Bot
 
         private Task Ready()
         {
+            Console.WriteLine("[System] AM Bot is Ready!");
             return Task.CompletedTask;
         }
     }
