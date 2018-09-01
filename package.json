@@ -1,0 +1,22 @@
+{
+  "name": "am-bot",
+  "version": "1.0.0",
+  "description": "Discord anonymous message bot ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MKachi/AM-Bot.git"
+  },
+  "author": "M_Kachi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MKachi/AM-Bot/issues"
+  },
+  "homepage": "https://github.com/MKachi/AM-Bot#readme",
+  "dependencies": {
+    "discord.js": "^11.4.2"
+  }
+}
