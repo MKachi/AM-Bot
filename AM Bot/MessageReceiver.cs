@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Discord;
@@ -26,20 +28,24 @@ namespace AM_Bot
             }
             else if (message.Content.Equals("!am help") || message.Content.Equals("!am"))
             {
+                Console.WriteLine(string.Format("[info] {0} : {1}", message.Author.Username, message.Content));
                 await message.Channel.SendMessageAsync(Messages.Get("help"));
             }
             else if (message.Content.Equals("!am open"))
             {
+                Console.WriteLine(string.Format("[info] {0} : {1}", message.Author.Username, message.Content));
                 await message.Author.SendMessageAsync(Messages.Get("open"));
             }
             else if (message.Content.IndexOf("!am").Equals(0))
             {
+                Console.WriteLine(string.Format("[info] {0} : {1}", message.Author.Username, message.Content));
                 await message.Author.SendMessageAsync(Messages.Get("missingCommand"));
             }
         }
 
         private async void DirectMessage(SocketMessage message)
         {
+            Console.WriteLine(string.Format("[info] {0} : {1}", message.Author.Username, message.Content));
             if (message.Content.Equals("!am help") || message.Content.Equals("!am"))
             {
                 await message.Author.SendMessageAsync(Messages.Get("DM help"));
@@ -55,11 +61,14 @@ namespace AM_Bot
                         if (!ReferenceEquals(channel.Name, null) && 
                             channel.GetType().Equals(typeof(SocketTextChannel)))
                         {
-
-                            var permissions = guild.GetUser(message.Author.Id).GetPermissions(channel);
-                            if (permissions.Has(ChannelPermission.SendMessages))
+                            SocketGuildUser user = guild.GetUser(message.Author.Id);
+                            if (!ReferenceEquals(user, null))
                             {
-                                sendText.Append("   ").Append(channel.Name).Append(" - ").Append(channel.Id).Append("\n");
+                                var permissions = user.GetPermissions(channel);
+                                if (permissions.Has(ChannelPermission.SendMessages))
+                                {
+                                    sendText.Append("   ").Append(channel.Name).Append(" - ").Append(channel.Id).Append("\n");
+                                }
                             }
                         }
                     }
@@ -93,7 +102,23 @@ namespace AM_Bot
                 {
                     SocketChannel channel = _client.GetChannel(_userSetting[message.Author.Id]);
                     var messageChannel = channel as IMessageChannel;
-                    await messageChannel.SendMessageAsync(message.Content);
+                    var attachments = message.Attachments;
+
+                    if (!message.Content.Equals(string.Empty))
+                    {
+                        await messageChannel.SendMessageAsync(message.Content);
+                    }
+
+                    if (attachments.Count > 0)
+                    {
+                        foreach (IAttachment attachment in attachments)
+                        {
+                            WebClient downloader = new WebClient();
+                            Stream stream = await downloader.OpenReadTaskAsync(attachment.Url);
+                            await messageChannel.SendFileAsync(stream, attachment.Filename);
+                            Console.WriteLine(string.Format("[info] {0} : {1}", message.Author.Username, attachment.Filename));
+                        }
+                    }
                 }
                 else
                 {
